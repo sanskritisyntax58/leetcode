@@ -1,0 +1,70 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* normalizeEmail(const char* email) {
+    char* result = (char*)malloc(101 * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int i = 0, j = 0;
+
+    // Process the local part of the email (before the '@').
+    while (email[i] != '\0') {
+        if (email[i] == '@') {
+            break; // Stop processing the local part when '@' is found.
+        }
+        if (email[i] == '+') {
+            // Skip the rest of the local part until '@'.
+            while (email[i] != '@' && email[i] != '\0') {
+                i++;
+            }
+            break; // Exit the loop to move to the domain part.
+        } else if (email[i] != '.') {
+            result[j++] = email[i];
+        }
+        i++;
+    }
+
+    // Append the domain name starting from the '@' symbol.
+    while (email[i] != '\0') {
+        result[j++] = email[i++];
+    }
+
+    result[j] = '\0';
+    return result;
+}
+
+int numUniqueEmails(char** emails, int emailsSize) {
+    char* unique[emailsSize];
+    int uniqueCount = 0;
+
+    for (int i = 0; i < emailsSize; i++) {
+        char* norm = normalizeEmail(emails[i]);
+        if (norm == NULL) {
+            continue;
+        }
+
+        int exists = 0;
+        for (int k = 0; k < uniqueCount; k++) {
+            if (strcmp(unique[k], norm) == 0) {
+                exists = 1;
+                break;
+            }
+        }
+
+        if (!exists) {
+            unique[uniqueCount++] = norm;
+        } else {
+            free(norm);
+        }
+    }
+
+    for (int i = 0; i < uniqueCount; i++) {
+        free(unique[i]);
+    }
+    
+    return uniqueCount;
+}
