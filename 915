@@ -1,0 +1,39 @@
+1.
+class Solution {
+public:
+    int partitionDisjoint(vector<int>& nums) {
+       int N=nums.size();
+       vector<int>PrefixMax(N),SuffixMin(N);
+       PrefixMax[0]=nums[0];
+       for(int i=1;i<N;i++){
+        PrefixMax[i]=max(PrefixMax[i-1],nums[i]);
+       }
+       SuffixMin[N-1]=nums[N-1];
+       for(int i=N-2;i>=0;i--){
+        SuffixMin[i]=min(SuffixMin[i+1],nums[i]);
+       }
+       for(int i=0;i<=N-2;i++){
+        if(PrefixMax[i]<=SuffixMin[i+1]){
+        return i+1;
+     }}
+        return N;
+    }
+};
+2.
+class Solution {
+public:
+    int partitionDisjoint(vector<int>& nums) {
+       int n=nums.size();
+       int leftMax=nums[0];
+       int overallMax=nums[0];
+       int partitionIdx=0;
+       for(int i=1;i<n;i++){
+        overallMax=max(overallMax,nums[i]);
+        if(nums[i]<leftMax){
+            leftMax=overallMax;
+            partitionIdx=i;
+        }
+       }
+       return partitionIdx+1;
+    }
+};
